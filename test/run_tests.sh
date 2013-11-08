@@ -72,7 +72,7 @@ rm -f test.${test}.*
 ./add-haplotypes-awk.sh test_extra_space.haps test.${test}.indices > test.${test}.awk.geno
 diff test.${test}.awk.geno test.${test}.geno && echo "ok" && rm test.${test}.* || echo "fail"
 
-test=5
+test=10
 echo -n "[${test}] testing that sample_bhaps and sample_haps produce the same indices for given seed with replacement... "
 rm -f test.${test}.*
 ../haps2bhaps.pl --input test.haps --output test.${test}.bhaps --nhaps 8
@@ -80,7 +80,7 @@ rm -f test.${test}.*
 ../sample_bhaps.pl --n 2 --input test.${test}.bhaps --output test.${test}.bhaps.geno --output_indices test.${test}.bhaps.indices --extra_sep --seed 314159 --with_replacement
 diff test.${test}.haps.indices test.${test}.bhaps.indices && echo "ok" && rm test.${test}.* || echo "fail"
 
-test=6
+test=11
 echo -n "[${test}] testing that sample_bhaps and sample_haps produce the same geno file for given seed with replacement... "
 rm -f test.${test}.*
 ../haps2bhaps.pl --input test.haps --output test.${test}.bhaps --nhaps 8
