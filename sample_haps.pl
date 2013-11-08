@@ -36,6 +36,7 @@ use warnings;
 use Getopt::Long qw(:config posix_default no_ignore_case);
 use IO::Uncompress::AnyInflate;
 use IO::Compress::Gzip;
+use List::Util qw(shuffle);
 
 my $fs=" ";
 my $ofs=" ";
@@ -46,10 +47,11 @@ my $out_haps_file;
 my $seed;
 my $out_indices_file;
 my $n;
+my $with_replacement=0; #if set, choose haplotypes with replacement rather than without 
 my $extra_sep = 0;
 my $verbose=0;
 sub usage {
-    die "Usage: $0 --n <number_of_genotypes_to_produce> --input <input_haps_file> --output <output_haps_file> --output_indices <output_haplotype_indices_file> [--seed <random_seed>] [--extra_sep] [--verbose] [--help]\n";
+    die "Usage: $0 --n <number_of_genotypes_to_produce> --input <input_haps_file> --output <output_haps_file> --output_indices <output_haplotype_indices_file> [--with_replacement] [--seed <random_seed>] [--extra_sep] [--verbose] [--help]\n";
 }
 
 GetOptions( "input|i=s" => \$in_haps_file,
@@ -58,6 +60,7 @@ GetOptions( "input|i=s" => \$in_haps_file,
 	    "output_indices=s" => \$out_indices_file,
 	    "n=i" => \$n,
 	    "extra_sep|e" => \$extra_sep,
+	    "with_replacement|r" => \$with_replacement,
 	    "verbose|v" => \$verbose,
 	    "help|?" => sub { usage(); },
     ) or usage();
@@ -92,11 +95,11 @@ my $out_indices_fh = fzoutopen($out_indices_file);
 # check how many columns in input matrix
 my $line = <$in_haps_fh>;
 chomp $line;
-my $hap_count = scalar(split(/$fs/, $line));
-if ($hap_count % 2 != 0) {
+my $nhaps = scalar(split(/$fs/, $line));
+if ($nhaps % 2 != 0) {
     die "must have an even number of haplotype columns in input matrix\n";
 }
-verblog("Found $hap_count haplotypes in input matrix.");
+verblog("Found $nhaps haplotypes in input matrix.");
 
 # set random seed
 if($seed) {
@@ -107,21 +110,31 @@ if($seed) {
     verblog("Set random seed to $seed");
 }
 
-# generate n*2 random numbers between 0 and $hap_count-1
+# generate n*2 random numbers between 0 and $nhaps-1
 my @indices;
-my @h1_indices;
-my @h2_indices;
-verblog("Generating $n*2 indices between 0 and ".($hap_count-1));
-for (my $i=0; $i<$n*2; $i++) {
-    my $index = int(rand($hap_count));
-    push @indices, $index;
-    if($i%2==0) {
-	push @h1_indices, $index;
-    } else {
-	push @h2_indices, $index;
+if ($with_replacement) {
+    # with replacement
+    verblog("Generating $n*2 indices with replacement between 0 and ".($nhaps-1));
+    for (my $i=0; $i<$n*2; $i++) {
+	my $index = int(rand($nhaps));
+	push @indices, $index;
     }
+} else {
+    # without replacement
+    verblog("Generating $n*2 indices without replacement between 0 and ".($nhaps-1));
+    @indices = (shuffle(0 .. ($nhaps-1)))[0 .. (($n*2)-1)];
 }
 
+# copy the indices into haplotype 1 and haplotype 2 arrays
+my @h1_indices;
+my @h2_indices;
+for (my $i=0; $i<$n*2; $i++) {
+    if($i%2==0) {
+	push @h1_indices, $indices[$i];
+    } else {
+	push @h2_indices, $indices[$i];
+    }
+}
 if (scalar(@h1_indices) != scalar(@h2_indices)) {
     die "h1_indices and h2_indices lengths differed\n";
 }
