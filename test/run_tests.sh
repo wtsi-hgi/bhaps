@@ -88,3 +88,14 @@ rm -f test.${test}.*
 ../sample_bhaps.pl --n 2 --input test.${test}.bhaps --output test.${test}.bhaps.geno --output_indices test.${test}.bhaps.indices --extra_sep --seed 314159 --with_replacement
 diff test.${test}.haps.geno test.${test}.bhaps.geno && echo "ok" && rm test.${test}.* || echo "fail"
 
+test=12
+echo -n "[${test}] testing that sample_bhaps indices without replacement do not contain repeat indices... "
+rm -f test.${test}.*
+../sample_haps.pl --n 2 --input test.haps --output test.${test}.haps.geno --output_indices test.${test}.haps.indices --extra_sep --seed 314159
+if [ -z $(cat test.${test}.haps.indices | perl -pi -e 's/\ /\n/g' | sort | uniq -d) ]
+then 
+    echo "ok" && rm test.${test}.*
+else
+    echo "fail"
+fi
+
