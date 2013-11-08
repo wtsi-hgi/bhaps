@@ -50,19 +50,19 @@ $ cat in.haps
 $ sample_haps.pl --n 3 --input in.haps --output out.geno --output_indices out.indices --verbose
 Found 8 haplotypes in input matrix.
 Set random seed to 937645825
-Generating 3*2 indices between 0 and 7
+Generating 3*2 indices without replacement between 0 and 7
 Writing indices to out.indices
 Processing input matrix to output matrix, sampling line-by-line
 finished.
 $ cat out.indices 
-2 7 6 2 0 3
+7 3 5 0 1 4
 $ cat out.geno 
-1 1 0
-1 1 2
-2 2 1
-0 0 1
-1 0 1
-1 2 1
+1 1 1
+1 1 1
+2 0 0
+0 2 2
+2 1 1
+0 1 1
 ```
 
 Because we did not specify a random seed (using `--seed <seed>`), `sample_haps.pl` has generated one 
@@ -73,19 +73,19 @@ We can generate exactly the same data again by supplying that value using `--see
 $ sample_haps.pl --n 3 --input in.haps --output out2.geno --output_indices out2.indices --seed 937645825 --verbose
 Found 8 haplotypes in input matrix.
 Set random seed to specified seed 937645825
-Generating 3*2 indices between 0 and 7
+Generating 3*2 indices without replacement between 0 and 7
 Writing indices to out2.indices
 Processing input matrix to output matrix, sampling line-by-line
 finished.
 $ cat out2.indices 
-2 7 6 2 0 3
+7 3 5 0 1 4
 $ cat out2.geno
-1 1 0
-1 1 2
-2 2 1
-0 0 1
-1 0 1
-1 2 1
+1 1 1
+1 1 1
+2 0 0
+0 2 2
+2 1 1
+0 1 1
 ```
 
 We can also convert the haps file to a compressed bhaps file (the recommended input format for `sample_bhaps.pl`), 
@@ -96,19 +96,19 @@ Wrote 15 byte header
 $ sample_bhaps.pl --n 3 --input out.bhaps.gz --output out3.geno.gz --output_indices out3.indices --seed 937645825 --verbose
 Opened bhaps file with nhaps==8
 Set random seed to specified seed 937645825
-Generating 3*2 indices between 0 and 7
+Generating 3*2 indices without replacement between 0 and 7
 Writing indices to out3.indices
 Processing input matrix to output matrix, sampling row-by-row
 reading next buffer at rec_count 6
 finished.
 $ cat out3.indices 
-2 7 6 2 0 3
+7 3 5 0 1 4
 $ zcat out3.geno.gz 
-1 1 0
-1 1 2
-2 2 1
-0 0 1
-1 0 1
-1 2 1
+1 1 1
+1 1 1
+2 0 0
+0 2 2
+2 1 1
+0 1 1
 ```
 
