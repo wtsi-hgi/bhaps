@@ -5,4 +5,5 @@ perl:
  - "5.12"
  - "5.10"
  - "5.8"
+install: "cpanm POSIX IO::Uncompress::AnyInflate IO::Compress::Gzip Getopt::Long List::Util"
 script: "./test/run_tests.sh"
