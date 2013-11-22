@@ -1,5 +1,6 @@
 bhaps
 =====
+[![Build Status](https://travis-ci.org/wtsi-hgi/bhaps.png)](https://travis-ci.org/wtsi-hgi/bhaps)
 
 bhaps consists of a set of tools to assist with simulations involving haplotype and genotype data. 
 It includes utilites for converting between binary (bhaps) and text (haps) file formats, as well 
